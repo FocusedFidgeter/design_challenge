@@ -52,6 +52,21 @@ I'm really excited for you to start with the challenges. Good luck!
     - [Resources](#resources-15)
   - [Day 20: Inappropriate Intimacy](#day-20-inappropriate-intimacy)
     - [Resources](#resources-16)
+  - [Day 21: Undo/Redo](#day-21-undoredo)
+      - [Resources](#resources)
+  - [Day 22: SQL to ORM](#day-22-sql-to-orm)
+      - [Resources](#resources-1)
+  - [Day 23: Unit tests (Basic)](#day-23-unit-tests-basic)
+  - [Day 24: Unit tests (Advanced)](#day-24-unit-tests-advanced)
+  - [Day 25: Operations Layer](#day-25-operations-layer)
+  - [Day 26: Ticket Cancellation](#day-26-ticket-cancellation)
+  - [Day 27: Messaging](#day-27-messaging)
+      - [Resources](#resources-2)
+  - [Day 28: Validation](#day-28-validation)
+      - [Resources](#resources-3)
+  - [Day 29: Bridge](#day-29-bridge)
+      - [Resources](#resources-4)
+  - [Day 30: Mixins](#day-30-mixins)
 - [Prerequisites](#prerequisites)
 - [Getting Started](#getting-started)
 
@@ -368,6 +383,160 @@ An example of inappropriate intimacy is in the code for this challenge. Can you 
 
 #### Resources
 * [Code smells](https://en.wikipedia.org/wiki/Code_smell) (Wikipedia)
+
+### Day 21: Undo/Redo
+
+This is a simple text editor. It's not a complete text editor, but it does provide a basic system underlying a text editor that allows for text operations like inserting and deleting text. Obviously, a real text editor will have a way more complex system underlying it, but that's out of the scope of this challenge (though feel free to extend this code if you like).
+
+The goal of this challenge is to extend the text editor to have undo and redo operations. However, when you write the code, make sure to think about how to add undo and redo behavior in such a way that it's independent of the text editing operations. For example, if you want to add a new text editing feature "boldface" in the future, you should be able to do it without having to change the undo/redo system.
+
+#### Resources
+
+[](https://github.com/ArjanCodes/30-day-design-challenge-21-30#resources)
+
+- [Command design pattern](https://www.youtube.com/watch?v=FM71_a3txTo) (Video)
+
+### Day 22: SQL to ORM
+
+SQL queries and SQLAlchemy ORM queries are two ways of querying relational databases, but they differ in their syntax and approach.
+
+SQL queries involve writing SQL statements directly in the code to retrieve data from the database. On the other hand, SQLAlchemy ORM queries are written in Python and use an object-oriented approach to interact with the database.
+
+Rather than writing SQL statements, developers define classes and their attributes that map to database tables and columns. These classes are known as ORM models, and they provide an abstraction layer between the application code and the database.
+
+In summary, while SQL queries require knowledge of SQL syntax and are more focused on the database structure, SQLAlchemy ORM queries provide a higher level of abstraction and can make database interactions more intuitive and Pythonic.
+
+In this challenge you're going to work on an API that allows you to manage events and book tickets for events. The starting point is an API that's already been implemented for you, using FastAPI in combination with a SQLite database. Currently, it's not setup ideally: the API routes contain all of the code and directly interact with the SQLite database using SQL queries. Next to needing to know SQL syntax, there's also the risk of accidentally creating a security risk (SQL injection) when you write code for this API.
+
+Refactor the code to use SQLAlchemy instead of direct SQL queries. For now, there's no need to refactor the actual API logic or extend the capabilities - this will be addressed in the upcoming challenges. However, I do recommend you split up the code into separate files at the same time, so that the main.py file remains small and your code remains manageable.
+
+#### Resources
+
+[](https://github.com/ArjanCodes/30-day-design-challenge-21-30#resources-1)
+
+- [SQL queries vs. ORM systems](https://www.youtube.com/watch?v=x1fCJ7sUXCM) (Video)
+
+### Day 23: Unit tests (Basic)
+
+Although test driven development (TDD) has some strong advantages when it comes to code integrity and maintainability, there are quite some cases that you will need to write tests for code that has been written already (either by you or others) and cannot/should not be changed or refactored.
+
+In this case that is the code of the events API we have created. Since APIs, are almost always designed with a universal architecture and structure, an attempt to refactor its components only for the sake of testing, might create more problems that it solves.
+
+Being able to write test code for existing software, is equally useful to writing tests together with the code itself.
+
+For this challenge you need to create test to check if the create_event API route works as it is supposed to: it is supposed to create an event in the database through a POST method.
+
+The complication is that this is a function with side effects, since it writes data to the database. The challenge is to write the test in such a way that:
+
+It doesn't interact with or change the database in any way. You should be able to run the test as often as you like, and it shouldn't be possible that a test is different due to a previously run test.
+
+Hints
+
+### Day 24: Unit tests (Advanced)
+
+For this challenge you will need to further test the API (see the Downloads section at the top for the code). Think about the possible edge cases that you should cover in the unit tests. You don't have to be complete (that would be a lot of work), but test at least for these two cases:
+
+- Event id doesn't exist when getting or deleting an event.
+- There are no more tickets available when buying a ticket.
+
+What other test cases can you think of? Write them down.
+
+### Day 25: Operations Layer
+
+Do you remember the GUI example where you had to use the Model-View-Controller/Presenter pattern? Or the CLI example where you had to separate the CLI-specific code from the actual logic?
+
+Similarly, when you write an API application, it's also good practice to separate the interface to the outside world (= the API routes) from the API logic.
+
+The best way to do this is to introduce an 'operations layer' that performs the actual database operations. The API routes then map to this operations layer, so that the logic is no longer directly in the route functions themselves.
+
+Refactor the code (see the Downloads) to incorporate an operations layer. Think about what the interface between the operations layer and the API routing functions should look like.
+
+Bonus: also rewrite the unit tests!
+
+### Day 26: Ticket Cancellation
+
+For this challenge you will need to add some extra functionality to the API. The extra functionality should implement the following:
+
+- Add a feature to allow for ticket cancellation. That should be for a single ticket based on its id. Also make sure that if an event is deleted, all the related tickets are deleted as well.
+- Add a feature to be able to change the name on a ticket.
+
+For both of these features, the API should make sure that the event for which the ticket is for hasn't started yet. In other words: you can only cancel a ticket or change the name on a ticket if an event hasn't started yet.
+
+### Day 27: Messaging
+
+The observer pattern is a design pattern in which an object, called the subject, maintains a list of its dependents, called observers, and notifies them automatically of any state changes, usually by calling one of their methods. This pattern is useful in situations where multiple objects need to be informed of changes to the state of another object, without tightly coupling them.
+
+For this challenge you should add a feature to the API to be able to send confirmations/notifications to the customer. You should design it in such a way that you can easily add different types of confirmation (email, SMS, or both). Switching between different confirmation methods should be modular and without changing the code, itself.
+
+Note that you don't have to integrate the code with an actual SMS or email notification system. For this challenge, it's enough if you simply print the message to the console. For example, you could simply write this print statement when an SMS is supposed to be sent:
+
+```python
+print(f"SMS: Your ticket has been reserved under id {ticket.id}!")
+```
+
+Add the following notifications/confirmations to the API:
+
+- When a ticket is booked, both a notification email and SMS are sent.
+- When an event is created, a notification email is sent.
+
+#### Resources
+
+[](https://github.com/ArjanCodes/30-day-design-challenge-21-30#resources-2)
+
+- [Observer pattern](https://www.youtube.com/watch?v=oNalXg67XEE) (Video)
+
+### Day 28: Validation
+
+Data validation is something you definitely need when users fill in data into a system. This will sanitize your data, preventing weird and unpredictable behavior later on that might cause very difficult and complicated bugs.
+
+For this challenge you should add some validation checks for both the event and the tickets in our API. You should add at least the following checks:
+
+- The available_tickets upon event creation can not be negative.
+- The end date of an event can not be before the starting date.
+- The customer email address should be a valid email address (meaning that it contains a @ etc - you don't have to check that the email address actually exists).
+
+Since we are using Pydantic classes for the EventCreate and TicketCreate classes, I recommend that you use the Pydantic built-in validation functionality.
+
+#### Resources
+
+[](https://github.com/ArjanCodes/30-day-design-challenge-21-30#resources-3)
+
+- [Pydantic](https://www.youtube.com/watch?v=Vj-iU-8_xLs) (Video)
+- [Comparison to dataclasses and attrs](https://www.youtube.com/watch?v=zN4VCb0LbQI) (Video)
+
+### Day 29: Bridge
+
+You're getting close to completing the challenge. Only two more challenges to go and you''ll be there!
+
+As you can see, this seems to be part of some sort of media/streaming system (I promise, I didn't steal this from Netflix!).
+
+In the application, you can define different types of media (movies, series, etc). You can also define different types of views such as a full view, preview, or a list view. Each of these views needs different information. For example, the list view needs only the heading, whereas the full view needs the heading, subheading and a description text.
+
+The view function handles all of this, which is not ideal. The main problem is that if you add a different type of media (for example a Documentary), you need to make a lot of changes to the view function. If you add a different type of view (such as a teaser that only shows the first 10 characters of the description text), you need to add that everywhere throughout the view function. As a result, this leads to a combinatorial explosion of views and media items.
+
+Your task is to refactor the code so that you can add more media items without having to change anything in the part dealing with the views, and vice versa. Use the Bridge design pattern to achieve this.
+
+To test whether your solution actually works, add a Documentary media item and check that you don't need to change anything in the code dealing with viewing media items. Also add a "teaser" view that prints just the first 10 characters of the description text and check that you don't need to change anything in the media item classes.
+
+#### Resources
+
+[](https://github.com/ArjanCodes/30-day-design-challenge-21-30#resources-4)
+
+- [Bridge design pattern](https://en.wikipedia.org/wiki/Bridge_pattern) (Wikipedia)
+- [Bridge pattern](https://www.youtube.com/watch?v=mM2-FPm1EhI) (Video)
+
+### Day 30: Mixins
+
+I'm not a big fan of using mixins for several reasons. You have to be careful as a developer when you use them because they can result in strange bugs related to multiple inheritance, they can break IDE autocompletion and suggestions, and they don't translate well outside of the Python world, since most programming languages forbid multiple inheritance, or only allow a very limited version of it using interfaces or abstract classes.
+
+On top of that, you can often replace mixins by composition. Instead of inheriting from a class, you simply get an instance of that class. Composition often leads to shorter code that easier to read and maintain. And it doesn't break your IDE!
+
+To illustrate this, take a look at the code for this (final!) challenge. It relies on mixins to model the game characters. Refactor the code so that it relies on composition instead. Think about how you would organize the data and the methods to achieve this. This is not an easy refactor. You're going to have to make a few tradeoffs to solve this, but it's well worth the effort and it will show you how composition helps you write cleaner and simpler code!
+
+Resources
+
+- [Mixins](https://en.wikipedia.org/wiki/Mixin) (Wikipedia)
+
 
 ## Prerequisites
 
