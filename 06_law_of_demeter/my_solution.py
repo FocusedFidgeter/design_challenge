@@ -8,17 +8,54 @@ class Item:
     price: Decimal
     quantity: int
 
+    def set_quantity(self, quantity: int) -> None:
+        self.quantity = quantity
+
+    def set_price(self, price: Decimal) -> None:
+        self.price = price
+
+    def total_price(self) -> Decimal:
+        return self.price * self.quantity
+
+    def display(self) -> str:
+        total_price = self.total_price()
+        return f"{self.name:<12}${self.price:>7.2f}{self.quantity:>7}     ${total_price:>7.2f}"
+
 
 @dataclass
 class ShoppingCart:
     items: list[Item] = field(default_factory=list)
     discount_code: str | None = None
 
+    def add_item(self, item: Item) -> None:
+        self.items.append(item)
+
+    def update_item_quantity(self, item_name: str, quantity: int) -> None:
+        for item in self.items:
+            if item.name == item_name:
+                item.set_quantity(quantity)
+
+    def update_item_price(self, item_name: str, price: Decimal) -> None:
+        for item in self.items:
+            if item.name == item_name:
+                item.set_price(price)
+
+    def remove_item(self, item_name: str) -> None:
+        self.items = [item for item in self.items if item.name != item_name]
+
+    def calculate_total(self) -> Decimal:
+        return sum(item.total_price() for item in self.items)
+
+    def print_cart(self) -> None:
+        print("Shopping Cart:")
+        print(f"{'Item':<10}{'Price':>10}{'Qty':>7}{'Total':>13}")
+        for item in self.items:
+            print(item.display())
+        print("=" * 40)
+        print(f"Total: ${self.calculate_total():>7.2f}")
+
 
 def main() -> None:
-    # Create a shopping cart and add some items to it
-    # I feel like there is a violation here as well.
-    # There should be an `append` function inside `ShoppingCart` or something
     cart = ShoppingCart(
         items=[
             Item("Apple", Decimal("1.5"), 10),
@@ -27,26 +64,11 @@ def main() -> None:
         ],
     )
 
-    # Update some items' quantity and price - Violation - turn into properties with getter/setter
-    cart.items[0].quantity = 10
-    cart.items[2].price = Decimal("3.50")
-
-    # Remove an item - Violation - turn into a scoped function
-    cart.items.remove(cart.items[1])
-	# Violation - turn `total` into a scoped function inside `ShoppingCart`
-	# Violation - turn the "inside-loop total" into a scoped function inside `item`
-    total = sum(item.price * item.quantity for item in cart.items)
-
-    # Print the cart - Violation - turn into a scoped function inside `ShoppingCart`
-    print("Shopping Cart:")
-    print(f"{'Item':<10}{'Price':>10}{'Qty':>7}{'Total':>13}")
-    for item in cart.items:
-        total_price = item.price * item.quantity
-        print(
-            f"{item.name:<12}${item.price:>7.2f}{item.quantity:>7}     ${total_price:>7.2f}"
-        )
-    print("=" * 40)
-    print(f"Total: ${total:>7.2f}")
+    cart.update_item_quantity("Apple", 10)
+    cart.update_item_price("Pizza", Decimal("3.50"))
+    cart.remove_item("Banana")
+    
+    cart.print_cart()
 
 
 if __name__ == "__main__":
